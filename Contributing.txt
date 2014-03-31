@@ -1,0 +1,47 @@
+Contributing is easy, just fork the project on Github and send a pull-request
+when your changes are ready.
+
+The core technical team of the LSB working group will review the pull request
+and once agreement is reached (2 or more +1) the request will be merged. The
+core technical team with repository commit access will abide by the same rules,
+i.e. members with commit access will send pull requests to allow public review
+of proposed changes.
+
+The repository is structured into two major categories, documents and tests.
+The documents directory is structured to follow the work flow, problem
+statement -> proposed solution -> solution, the details are outlined below. The
+testing directory is structured to differentiate tests to their applicability,
+for example an interface test for glibc would be found in tests/glibc and
+tests that address distribution concerns, such as identifying the vendor are
+located in tests/distro. 
+
+documents/problems
+  - contains text files following the template (specification.tmpl) with
+    a completed Problem Statement section.
+  - the documents describe a problem that affects many or all distributions
+    and makes it difficult to treat the distributions as one platform from
+    an ISV developer or administrative point of view. Differences in packaging
+    generally do not fall into this category.
+
+documents/proposals
+  - contains text files following the template (specification.tmpl) with
+    a completed Problem Statement and a completed Proposed Solution section.
+  - the documents describe the proposed solution to the problem statement,
+    that will function as the starting point of a discussion in the respective
+    distribution development communities. Links to the mailing list discussions
+    are to be included.
+
+documents/specifications
+  - contains text files following the template (specification.tmpl) with
+    a completed Problem Statement and a completed Solution section.
+  - the documents describe the consensus solution to the problem statement.
+    In most cases the "Proposed Solution" section can be renamed to
+    "Solution". The links to the mailing list discussions during the proposal
+    phase are to remain.
+  - contains a list of distributions that have pledged to abide by this
+    specification and integrate the appropriate unit test into their QA suite
+  - contains the name(s) of the tests verifying the solution implementation.
+
+tests/distro
+  - contains tests that verify distribution level specifications, such as
+    the identification of the distribution vendor.
