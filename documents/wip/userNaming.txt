@@ -1,0 +1,201 @@
+LSB Specification Proposal
+
+Problem Statement:
+------------------
+
+For administrators and certain types of applications it is important to have
+a cross distribution consistent naming policy for system created users. In
+certain cases it is also important to have a consistent user and group ids
+(UID & GID) for system created users.
+
+The various available cloud frameworks such as OpenStack, openNebula,
+CloudStack, and Eucalyptus come to mind. All cloud frameworks have services
+running on all the nodes in a cluster that comprises the cloud on the hardware
+side. It is generally possible to configure image sharing in these frameworks
+via NFS and thus the user name, UID, and GID need to match on all installations
+to provide the proper access permissions. This requirement reduces to
+consistent user names with NFSv4, but the adoption rate of NFSv4 is unknown.
+Additionally services for cloud frameworks may be configured in an HA
+environment and may not tolerate fail-over with UID transitioning.
+
+In an environment where LDAP is used system administrators may pre-create
+system users through the LDAP mechanism. This is difficult if different
+user names and UID as well as GID implementations exist across various
+distributions.
+
+Last but not least system users, i.e. names created through distribution
+provided packages, may collide with names created for "regular" system
+users. A common pattern for user names on Unix systems is to combine
+letters of the users name, many combinations of first and last name letters
+are in use. This may lead to combinations that may overlap with system user
+names. Sharing a user name between a system user and a person user leads
+to surprising or even security relevant misbehavior as the daemon user
+may write to files in the real user's home or vice versa.
+
+A cross distribution solution will also give upstream projects an avenue to
+determine user names when needed and ensure that distributions are consistent
+eliminating one potential source of issues for upstream projects
+
+
+Proposed Solution:
+--------------------
+
+The proposal is to adopt a consistent naming an numbering convention across
+Linux distributions. The proposed solution is 3 fold to address 3 distinct
+problems described in the Problem Statement above.
+
+1.) Consistent grouping of system users, system users are defined as those
+    users created by distribution packages.
+2.) Create a naming convention for system users
+3.) Create prescribed user IDs for specific system users that need to be
+    consistent across distributions.
+
+1.) It is proposed to consider using a grouping similar to the existing
+Debian numbering policy documented here: https://www.debian.org/doc/debian-policy/ch-opersys.html#s9.2.1 . This provides the option of assigning "fixed" UIDs
+for those processes that need them in either the range of 1 - 99 (0 being
+already allocated for root) or in the 60000 - 64999 range. Although is expected
+that only few (famous last words) system users need a consistent UID across
+distributions it is probably best to allocate fixed IDs in the 60000 range to
+avoid interfereing with existing IDs used by various distributions in the
+0-99 range. It should be up to the upstream projects or packagers of
+that code to make a case for a static UID/GID.
+
+Some of the current policies:
+
+Debian
+------ 
+https://www.debian.org/doc/debian-policy/ch-opersys.html#s9.2.1
+
+0-99:
+  pre-allocated fixed uids
+  http://anonscm.debian.org/gitweb/?p=users/cjwatson/base-passwd.git;a=blob;f=passwd.master;h=7cd4e24bfcb6f4595dec40524fec5cc2f98fe962;hb=HEAD
+
+100-999:
+  dynamically allocated system users
+
+1000-59999:
+  user accounts
+
+60000-64999:
+  reserved fixed uids, created on demand for 'obscure' packages.
+  Registry of user names is here:
+  http://anonscm.debian.org/gitweb/?p=users/cjwatson/base-passwd.git;a=blob;f=README;h=664277f47e5aec143278d9a3fff3b6c4a7ed4895;hb=HEAD
+
+65000-65533:
+  unused 
+
+Fedora
+------ 
+from
+http://pkgs.fedoraproject.org/cgit/shadow-utils.git/tree/shadow-utils.login.defs
+
+0-200:
+ reserved fixed uids, most created on demand
+ https://git.fedorahosted.org/cgit/setup.git/tree/passwd
+ Registry:
+ https://git.fedorahosted.org/cgit/setup.git/tree/uidgid
+ looking at that file it seems they are running out of uids there
+
+201-999:
+  dynamically allocated system users
+
+1000-60000:
+  user accounts
+
+Gentoo
+------
+login.defs seems to be unmodified from shadow package
+
+0-100:
+  reserved fixed uids (+250 which is hardcoded to portage)
+  http://sources.gentoo.org/cgi-bin/viewvc.cgi/baselayout/trunk/share.Linux/passwd?revision=3110&view=markup
+  Some created on demand but no central registry seems to exist
+
+101-999:
+  dynamically allocated system users
+
+1000-60000:
+  user accounts
+
+SUSE
+----
+from /etc/login.defs, pkg shadow
+
+0-99:
+  reserved fixed uids, some created on demand by packages but no
+  registry for those
+
+100-499:
+  dynamically allocated system users
+
+500-999:
+  unused
+
+1000-60000:
+  user accounts
+
+
+Thanks to Ludwig Nussel for doing the leg work and collecting this information.
+The registry of users could rest with the LSB work group.
+
+2.) We should establish a naming convention for all users created by packages.
+The chosen convention should diminish the collision likelihood between users
+created by the system administrator, i.e. "real" users and system users. In a
+discussion on the openSUSE list it was proposed to prefix system user names
+with an "_" (underscore.) This has precedence in openBSD, the proposal for
+this prefix and a rationale can be found here:
+https://github.com/lnussel/osep_opensuse_usernames/blob/master/opensuse_usernames.txt. Using "_" as a prefix appears to be a reasonable solution
+and thus this is nominated as the solution to adopt.
+
+3.) Using fixed UID/GID for certain types of system users across distributions
+will allow users to install multiple distributions and use the distribution
+provided packages without having to take special care of the creation of
+UIDs and GIDs for these users. The primary candidates for cross distribution
+consistent UDS and GIDs are the known cloud frame works, CloudStack,
+Eucalyptus, openNebula, and OpenStack. All frameworks support storage access
+via NFS for image storage or may be setup in a HA environment. While NFSv4
+supports different UIDs/GIDs for the same user on different installations, the
+penetration of NFSv4 may not be sufficiently high to eliminate this need. In
+an HA fail over environment the potential change in UID of the user on one
+machine and another UID on the fail over machine may not be tolerated. It is
+therefore proposed that the created system users for the cloud frameworks
+be assigned consistent user IDs across distributions start with 99 and working
+down, the order is not of material interest.
+
+_oneadmin   -> 60001  (system user for openNebula)
+_openstack  -> 60002
+_cloudstack -> 60003
+_eucalyptus -> 60004
+
+Using the proposed "_" prefix for the proposed IDs for the cloud frameworks.
+
+
+Solution Discussion Links:
+--------------------------
+
+Discussion on openSUSE-Factory ML concerning the introduction of "_" as a
+prefix naming convention for system users.
+http://lists.opensuse.org/opensuse-factory/2014-03/msg00333.html
+
+Fedora: http://permalink.gmane.org/gmane.linux.redhat.fedora.devel/194771
+
+
+
+Solution Rationale:
+------------------
+
+Provide a brief description how the documented solution was derived.
+
+
+Distributions Support:
+----------------------
+
+A list of distributions that have pledged to adhere to this specification and
+integrate the test into their QA suite.
+
+
+Verification Test:
+------------------
+
+tests/distro/userNames.py
+tests/distro/groupNames.py
