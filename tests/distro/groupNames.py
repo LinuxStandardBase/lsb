@@ -3,6 +3,8 @@
 import grp
 import sys
 
+#	FIXME: does not run on CentOS 6.5
+
 lsbGroups = {
     'root'    : 0,
     'nobody'  : 65533,
