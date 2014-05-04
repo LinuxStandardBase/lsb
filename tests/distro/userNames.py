@@ -24,10 +24,10 @@ lsbUsers = {
 }
 
 for pwent in pwd.getpwall():
-    if lsbUsers.has_key(pwent.pw_name):
+    if pwent.pw_name in lsbUsers:
         if (pwent.pw_uid, pwent.pw_gid) != lsbUsers[pwent.pw_name]:
-            print 'UID and or GID for user %s do not match specification' %usr
-            print 'found: (', uid, ',', gid, ') expected: ', lsbUsers[usr]
+            print 'UID and/or GID for user %s do not match specification' %pwent.pw_name
+            print 'found: (', pwent.pw_uid, ',', pwent.pw_gid, ') expected: ', lsbUsers[pwent.pw_name]
             sys.exit(1)
 
 #	TBD: get rid of un-sourced numeric constants
