@@ -12,8 +12,8 @@ lsbGroups = {
 }
 
 for grpent in grp.getgrall():
-    if lsbGroups.has_key(grpent.gr_name):
+    if grpent.gr_name in lsbGroups:
         if grpent.gr_gid != lsbGroups[grpent.gr_name]:
-            print 'GID for group %s does not match specification' %grp
-            print 'found: ', gid, ',', ' expected: ', lsbGroups[grp]
+            print 'GID for group %s does not match specification' %grpent.gr_name
+            print 'found: ', grpent.gr_gid, ',', ' expected: ', lsbGroups[grpent.gr_name]
             sys.exit(1)
