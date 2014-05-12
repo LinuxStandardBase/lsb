@@ -15,21 +15,13 @@ for example an interface test for glibc would be found in tests/glibc and
 tests that address distribution concerns, such as identifying the vendor are
 located in tests/distro. 
 
-documents/problems
+documents/wip
   - contains text files following the template (specification.tmpl) with
-    a completed Problem Statement section.
+    at least a completed Problem Statement section.
   - the documents describe a problem that affects many or all distributions
     and makes it difficult to treat the distributions as one platform from
     an ISV developer or administrative point of view. Differences in packaging
     generally do not fall into this category.
-
-documents/proposals
-  - contains text files following the template (specification.tmpl) with
-    a completed Problem Statement and a completed Proposed Solution section.
-  - the documents describe the proposed solution to the problem statement,
-    that will function as the starting point of a discussion in the respective
-    distribution development communities. Links to the mailing list discussions
-    are to be included.
 
 documents/specifications
   - contains text files following the template (specification.tmpl) with
