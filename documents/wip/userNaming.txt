@@ -68,7 +68,7 @@ https://www.debian.org/doc/debian-policy/ch-opersys.html#s9.2.1
 
 0-99:
   pre-allocated fixed uids
-  http://anonscm.debian.org/gitweb/?p=users/cjwatson/base-passwd.git;a=blob;f=passwd.master;h=7cd4e24bfcb6f4595dec40524fec5cc2f98fe962;hb=HEAD
+  https://anonscm.debian.org/cgit/users/cjwatson/base-passwd.git/tree/passwd.master
 
 100-999:
   dynamically allocated system users
@@ -79,7 +79,7 @@ https://www.debian.org/doc/debian-policy/ch-opersys.html#s9.2.1
 60000-64999:
   reserved fixed uids, created on demand for 'obscure' packages.
   Registry of user names is here:
-  http://anonscm.debian.org/gitweb/?p=users/cjwatson/base-passwd.git;a=blob;f=README;h=664277f47e5aec143278d9a3fff3b6c4a7ed4895;hb=HEAD
+  https://anonscm.debian.org/cgit/users/cjwatson/base-passwd.git/tree/README
 
 65000-65533:
   unused 
@@ -108,7 +108,7 @@ login.defs seems to be unmodified from shadow package
 
 0-100:
   reserved fixed uids (+250 which is hardcoded to portage)
-  http://sources.gentoo.org/cgi-bin/viewvc.cgi/baselayout/trunk/share.Linux/passwd?revision=3110&view=markup
+  https://gitweb.gentoo.org/proj/baselayout.git/tree/share.Linux/passwd
   Some created on demand but no central registry seems to exist
 
 101-999:
